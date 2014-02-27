@@ -43,7 +43,7 @@ def make_customer():
 def main():
 	customers = []
 
-	for i in range(10):
+	for i in range(1):
 		customers.append((fake.date_time_this_month(), make_customer()))
 
 	run(customers);
