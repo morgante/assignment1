@@ -1,4 +1,4 @@
-from datetime import date, timedelta # for date math in EyeTest
+from datetime import date, datetime, timedelta # for date math in EyeTest
 
 class AbstractPrimaryDocument(object):
     def __init__(self, first_name, last_name, nationality, gender, date_of_birth, expiry_date):
@@ -26,7 +26,7 @@ class EyeTest(AbstractPrimaryDocument):
     def __init__(self, first_name, last_name, nationality, gender, date_of_birth, expiry_date):
         # Eye Tests expire after 30 days
         if expiry_date is None:
-            expiry_date = date.today() + timedelta(days=30)
+            expiry_date = datetime.now() + timedelta(days=30)
         super(EyeTest,self).__init__(first_name, last_name, nationality, gender, date_of_birth, expiry_date)
 
 # Translated (ie. Araabic) drivers license

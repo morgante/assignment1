@@ -9,11 +9,13 @@ from lib import Queue, Station
 # Reception controls everything, and there is only one receptionist but she works instantaneously
 class Reception(Station):
 	type = 'reception'
+	prefix = 'R'
 
 	def __init__(self, queue, customers):
 		self.queue = queue
 
-		self.finished = 0
+		self.finished = []
+		self.failures = []
 		self.desired = len(customers)
 
 		self.translation = Translation(self)
@@ -22,6 +24,9 @@ class Reception(Station):
 
 	def process(self, customer):
 		print "Processing reception for %s" % customer.emirates_id.first_name
+
+		if (customer in self.failures):
+			return
 
 		if (customer.eye_test is None):
 			self.testing.add(customer)
@@ -36,10 +41,16 @@ class Reception(Station):
 
 		if (customer.uae_license is not None):
 			print "%s is finished at %s" % (customer.emirates_id.first_name, time.time())
-			self.finished += 1
+			self.finished.append(customer)
+
+	def fail(self, customer, cycle=True):
+		self.failures.append(customer)
+
+		if (cycle):
+			self.add(customer)
 
 	def run(self):
-		while True:
+		while len(self.finished) + len(self.failures) < self.desired:
 			customer = self.queue.get()
 
 			self.process(customer)
@@ -48,15 +59,21 @@ class Reception(Station):
 
 		self.queue.wait()
 
+		print "Finished the DLD queue: %s" % time.time()
+
+		return self.finished
+
 def run(customers):
 	print "Starting to run through the DLD queue: %s" % time.time()
 
-	queue = Queue()
+	queue = Queue('R')
 	reception = Reception(queue, customers)
 
 	for customer in customers:
-		queue.add(customer)
+		if (customer.emirates_id is None):
+			print "Unknown customer has failed permanently dueto lack of Emirates ID"
+			reception.fail(customer, False)
+		else:
+			queue.add(customer)
 
-	reception.run()
-
-	print "Finished the DLD queue: %s" % time.time()
+	return reception.run()

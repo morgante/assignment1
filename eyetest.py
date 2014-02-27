@@ -1,5 +1,6 @@
 import time
 import threading
+import random
 
 from models import *
 from lib import Queue, Station
@@ -14,9 +15,11 @@ class EyeTestAgent(threading.Thread):
 	def process(self, customer):
 		print "Processing eye test for %s" % customer.emirates_id.first_name
 
-		time.sleep(1)
+		time.sleep(random.randint(120,300))
 
-		customer.eye_test = True
+		customer.eye_test = EyeTest(customer.emirates_id.first_name, customer.emirates_id.last_name, \
+			customer.emirates_id.nationality, customer.emirates_id.gender, customer.emirates_id.date_of_birth, None)
+		
 		return customer
 
 	def run(self):
@@ -32,6 +35,7 @@ class EyeTestAgent(threading.Thread):
 
 class EyeTesting(Station):
 	type = 'eye test'
+	prefix = 'B'
 
 	def __init__(self, reception):
 		super(EyeTesting, self).__init__(reception)
