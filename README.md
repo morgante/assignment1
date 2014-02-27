@@ -3,6 +3,8 @@ assignment1
 
 Assignment 1 for CS-209
 
+The system is executed with the run(customer_list) method from assignment1.py, which returns a list of completed licenses.
+
 Todo
 ----
 1. [0 points] Get your programming environment set up; I assume that since you all have prior programming experience that this will not be a difficult task. - **Asyrique**

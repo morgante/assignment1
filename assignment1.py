@@ -60,4 +60,5 @@ def main():
 	for license in successful:
 		print "%s was successful" % license.driver.emirates_id.first_name
 
-main()
+if __name__ == "__main__":
+    main()
