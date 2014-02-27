@@ -1,12 +1,23 @@
-from models import *
 from faker import Faker
 from datetime import date
+
+from models import *
+import flow
 
 # Make Faker data
 fake = Faker()
 
 def run(customer_list):
-	return 'd;'
+
+	# Sort the customers by arrival time
+	customer_list.sort(key=lambda tup: tup[0]);
+
+	for (time, customer) in customer_list:
+		flow.enter(customer)
+
+	flow.run()
+
+	return 'done'
 
 # Makes a random customer, for testing
 def make_customer():
@@ -30,9 +41,9 @@ def make_customer():
 def main():
 	customers = []
 
-	for i in range(3):
-		customers.append((date.today(), make_customer()))
+	for i in range(10):
+		customers.append((fake.date_time_this_month(), make_customer()))
 
-	print customers
+	run(customers);
 
 main()
