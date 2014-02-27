@@ -1,12 +1,13 @@
 import time
 import threading
-import Queue
 
 from models import *
+from lib import Queue
 
 class Printer():
 	def __init__(self):
 		self.idle = True
+		self.time = 1 # How long it takes to print a card
 
 	def is_idle(self):
 		return self.idle
@@ -18,7 +19,7 @@ class Printer():
 		print "Starting to print card for %s at %s" % (customer.emirates_id.first_name, time.time())
 		self.idle = True
 
-		time.sleep(1)
+		time.sleep(self.time)
 
 		customer.uae_license = UAE_Drivers_License(customer)
 
@@ -47,17 +48,17 @@ class PrintStation(threading.Thread):
 
 			self.process(customer)
 
-			self.queue.task_done()
+			self.queue.done()
 
 class Printing():
 	def __init__(self, reception):
-		self.queue = Queue.Queue()
+		self.queue = Queue()
 
 		station = PrintStation(self.queue, reception)
 		station.setDaemon(True)
 		station.start()
 
-		self.queue.join()
+		self.queue.wait()
 
 	def add(self, customer):
-		self.queue.put(customer)
+		self.queue.add(customer)
