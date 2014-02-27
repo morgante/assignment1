@@ -3,20 +3,20 @@ import time
 
 from printer import Printing
 from translation import Translation
-from lib import Queue
+from lib import Queue, Station
 
 # Reception controls everything, and there is only one receptionist but she works instantaneously
-class Reception():
+class Reception(Station):
+	type = 'reception'
+
 	def __init__(self, queue, customers):
 		self.queue = queue
+		
 		self.finished = 0
 		self.desired = len(customers)
 
 		self.translation = Translation(self)
 		self.printer = Printing(self)
-
-	def add(self, customer):
-		self.queue.add(customer)
 
 	def process(self, customer):
 		print "Processing reception for %s" % customer.emirates_id.first_name
@@ -26,6 +26,7 @@ class Reception():
 			self.finished += 1
 		elif (customer.drivers_license_translation is None):
 			self.translation.add(customer)
+			print "Translation queue is %s people" % self.translation.peek()
 		else:
 			print "Printing reception for %s" % customer.emirates_id.first_name
 			self.printer.add(customer)

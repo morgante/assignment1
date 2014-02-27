@@ -2,7 +2,7 @@ import time
 import threading
 
 from models import *
-from lib import Queue
+from lib import Queue, Station
 
 class Printer():
 	def __init__(self):
@@ -28,7 +28,7 @@ class Printer():
 		return 's';
 
 
-class PrintStation(threading.Thread):
+class PrintAgent(threading.Thread):
 	def __init__(self, queue, reception):
 		threading.Thread.__init__(self)
 		self.queue = queue
@@ -50,15 +50,14 @@ class PrintStation(threading.Thread):
 
 			self.queue.done()
 
-class Printing():
-	def __init__(self, reception):
-		self.queue = Queue()
+class Printing(Station):
+	type = 'print'
 
-		station = PrintStation(self.queue, reception)
+	def __init__(self, reception):
+		super(Printing, self).__init__(reception)
+
+		station = PrintAgent(self.queue, reception)
 		station.setDaemon(True)
 		station.start()
 
 		self.queue.wait()
-
-	def add(self, customer):
-		self.queue.add(customer)

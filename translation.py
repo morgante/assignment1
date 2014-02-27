@@ -2,7 +2,7 @@ import time
 import threading
 
 from models import *
-from lib import Queue
+from lib import Queue, Station
 
 
 class TranslationAgent(threading.Thread):
@@ -30,9 +30,11 @@ class TranslationAgent(threading.Thread):
 
 			self.queue.done()
 
-class Translation():
+class Translation(Station):
+	type = 'translation'
+
 	def __init__(self, reception):
-		self.queue = Queue()
+		super(Translation, self).__init__(reception)
 
 		for i in range(2):
 			agent = TranslationAgent(self.queue, reception)
@@ -40,7 +42,3 @@ class Translation():
 			agent.start()
 
 		self.queue.wait()
-
-	def add(self, customer):
-		print "Putting %s in translation queue" % customer.emirates_id.first_name
-		self.queue.add(customer)
