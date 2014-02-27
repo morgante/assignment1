@@ -12,10 +12,12 @@ def run(customer_list):
 	# Sort the customers by arrival time
 	customer_list.sort(key=lambda tup: tup[0]);
 
-	for (time, customer) in customer_list:
-		flow.enter(customer)
+	customers = []
 
-	flow.run()
+	for (time, customer) in customer_list:
+		customers.append(customer)
+
+	flow.run(customers)
 
 	return 'done'
 
