@@ -3,41 +3,43 @@ import threading
 
 from models import *
 from lib import Queue, Station
+from printer import Printing
 
 
-class TranslationAgent(threading.Thread):
+class LicensingAgent(threading.Thread):
 	def __init__(self, queue, reception):
 		threading.Thread.__init__(self)
 		self.queue = queue
 		self.reception = reception
+		self.printer = Printing(reception)
 
 	def process(self, customer):
-		print "Processing translation for %s" % customer.emirates_id.first_name
+		print "Processing licensing for %s" % customer.emirates_id.first_name
 
 		time.sleep(1)
-
-		customer.drivers_license_translation = True
+		
+		# Send them to print it
+		self.printer.add(customer)
+		
 		return customer
 
 	def run(self):
-		print "Translation Agent(%s) is starting" % self.getName()
+		print "Licensing Agent(%s) is starting" % self.getName()
 		while True:
 			customer = self.queue.get()
 
 			self.process(customer)
 
-			self.reception.add(customer)
-
 			self.queue.done(customer)
 
-class Translation(Station):
-	type = 'translation'
+class Licensing(Station):
+	type = 'licensing'
 
 	def __init__(self, reception):
-		super(Translation, self).__init__(reception)
+		super(Licensing, self).__init__(reception)
 
 		for i in range(2):
-			agent = TranslationAgent(self.queue, reception)
+			agent = LicensingAgent(self.queue, reception)
 			agent.setDaemon(True)
 			agent.start()
 

@@ -5,14 +5,24 @@ import time
 class Queue(object):
 	def __init__(self):
 		self.queue = LibQueue.Queue()
+		self.numbers = {}
 
 	def get(self):
 		return self.queue.get()
 
-	def add(self, item):
-		return self.queue.put(item)
+	def add(self, customer):
+		id = customer.emirates_id.id_number
 
-	def done(self):
+		if (id not in self.numbers):
+			self.numbers[id] = 's'
+
+			return self.queue.put(customer)
+
+	def done(self, customer):
+		id = customer.emirates_id.id_number
+
+		self.numbers.pop(id)
+
 		return self.queue.task_done()
 
 	def peek(self):

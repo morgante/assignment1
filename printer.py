@@ -8,6 +8,7 @@ class Printer():
 	def __init__(self):
 		self.idle = True
 		self.time = 1 # How long it takes to print a card
+		self.printed = 0 # How many cards have been printed, for debugging
 
 	def is_idle(self):
 		return self.idle
@@ -22,6 +23,9 @@ class Printer():
 		time.sleep(self.time)
 
 		customer.uae_license = UAE_Drivers_License(customer)
+
+		self.printed += 1
+		print "Printer has printed %s cards" % self.printed
 
 		print "Finished printing card for %s at %s" % (customer.emirates_id.first_name, time.time())
 
@@ -48,7 +52,7 @@ class PrintAgent(threading.Thread):
 
 			self.process(customer)
 
-			self.queue.done()
+			self.queue.done(customer)
 
 class Printing(Station):
 	type = 'print'

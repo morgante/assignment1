@@ -1,8 +1,8 @@
 import threading
 import time
 
-from printer import Printing
 from translation import Translation
+from licensing import Licensing
 from eyetest import EyeTesting
 from lib import Queue, Station
 
@@ -18,7 +18,7 @@ class Reception(Station):
 
 		self.translation = Translation(self)
 		self.testing = EyeTesting(self)
-		self.printer = Printing(self)
+		self.licensing = Licensing(self)
 
 	def process(self, customer):
 		print "Processing reception for %s" % customer.emirates_id.first_name
@@ -31,20 +31,20 @@ class Reception(Station):
 			self.translation.add(customer)
 			print "Translation queue is %s people" % self.translation.peek()
 
-		if (customer.eye_test is not None and customer.drivers_license_translation is not None):
-			self.printer.add(customer)
+		if (customer.eye_test is not None and customer.drivers_license_translation is not None and customer.uae_license is None):
+			self.licensing.add(customer)
 
 		if (customer.uae_license is not None):
 			print "%s is finished at %s" % (customer.emirates_id.first_name, time.time())
 			self.finished += 1
 
 	def run(self):
-		while self.finished < self.desired:
+		while True:
 			customer = self.queue.get()
 
 			self.process(customer)
 
-			self.queue.done()
+			self.queue.done(customer)
 
 		self.queue.wait()
 

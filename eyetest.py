@@ -28,7 +28,7 @@ class EyeTestAgent(threading.Thread):
 
 			self.reception.add(customer)
 
-			self.queue.done()
+			self.queue.done(customer)
 
 class EyeTesting(Station):
 	type = 'eye test'
