@@ -2,6 +2,8 @@ import threading
 import Queue
 import time
 
+from printer import Printing
+
 class TranslationAgent(threading.Thread):
 	def __init__(self, queue, reception):
 		threading.Thread.__init__(self)
@@ -50,6 +52,7 @@ class Reception():
 		self.desired = len(customers)
 
 		self.translation = Translation(self)
+		self.printer = Printing(self)
 
 	def add(self, customer):
 		self.queue.put(customer)
@@ -57,11 +60,14 @@ class Reception():
 	def process(self, customer):
 		print "Processing reception for %s" % customer.emirates_id.first_name
 
-		if (customer.drivers_license_translation is None):
-			self.translation.add(customer)
-		else:
+		if (customer.uae_license is not None):
 			print "%s is finished at %s" % (customer.emirates_id.first_name, time.time())
 			self.finished += 1
+		elif (customer.drivers_license_translation is None):
+			self.translation.add(customer)
+		else:
+			print "Printing reception for %s" % customer.emirates_id.first_name
+			self.printer.add(customer)
 
 		return customer
 

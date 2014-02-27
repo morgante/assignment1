@@ -46,3 +46,4 @@ class Customer(object):
         self.passport = passport
         self.eye_test = eye_test
         self.drivers_license_translation = drivers_license_translation
+        self.uae_license = None
