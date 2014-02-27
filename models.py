@@ -47,3 +47,15 @@ class Customer(object):
         self.eye_test = eye_test
         self.drivers_license_translation = drivers_license_translation
         self.uae_license = None
+
+
+class Application(AbstractPrimaryDocument):
+    def __init__(self, first_name, last_name, translated_license, passport, emirates_id):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.translated_license = translated_license
+        self.passport = passport
+        self.emirates_id = emirates_id
+
+        self.eye_test = None
+        self.paid = False

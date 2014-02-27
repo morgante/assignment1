@@ -16,6 +16,17 @@ class LicensingAgent(threading.Thread):
 	def process(self, customer):
 		print "Processing licensing for %s" % customer.emirates_id.first_name
 
+		# Enter biographical information, existing license, visa (passport), and emirates ID
+		app = Application(customer.emirates_id.first_name, customer.emirates_id.last_name, \
+			customer.drivers_license_translation, customer.passport, customer.emirates_id)
+
+		# Enter eye test
+		app.eye_test = customer.eye_test
+
+		# Enter payment
+		app.paid = True
+
+		# Make this take some time
 		time.sleep(1)
 		
 		# Send them to print it
